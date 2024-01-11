@@ -1,0 +1,121 @@
+---
+title: "Data analysis pilots"
+author: "Nathanael Larigaldie"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document: 
+    toc: yes
+    latex_engine: lualatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lme4)
+library(afex)
+library(emmeans)
+library(gridExtra)
+library(sjPlot)
+library(sjmisc) 
+library(effects)
+library(sjstats)
+library(simr)
+```
+
+## Dataset loading
+
+```{r}
+datasets       <- list.files(file.path("final_data"), pattern="*.csv", full.names = TRUE)
+datasets       <- lapply(datasets, read_csv, show_col_types = FALSE)
+
+d <- datasets[[1]]
+for (i in seq(from=2, to=length(datasets)))
+{
+  d <- rbind(d, datasets[[i]])
+}
+```
+
+## Dataset preparation
+
+```{r}
+d <- d %>% mutate(Subject=rep(seq_len(length(datasets)), each=100))
+```
+
+Then we remove fixation times <=1500ms, scale the Agreement feature and take its square, and log-transform Fixation.Time
+
+```{r}
+d_final <- d %>% filter(Fixation.Time > 1500) %>%
+  mutate(Fixation.Time.Log = log(Fixation.Time),
+         Agreement.Scaled = (Agreement-mean(Agreement))/sd(Agreement),
+         Squared.Agreement.Scaled=Agreement.Scaled^2,
+         Index=as.factor(Index), Subject=as.factor(Subject))
+```
+
+## Variables plot (violin & boxplot + density)
+
+```{r}
+
+violin_fixation <- ggplot(d_final, aes(x="Fixation time", y=Fixation.Time.Log)) +
+  ylab("Fixation Time (log)") + theme_minimal() +
+  theme(legend.position = "none") +
+  geom_violin(width=1.2) + geom_boxplot(width=0.1, alpha=0.2)
+
+
+violin_agreement <- ggplot(d_final, aes(x="Agreement", y=Agreement.Scaled)) +
+  ylab("Agreement (scaled)") + theme_minimal() +
+  theme(legend.position = "none") +
+  geom_violin(width=1.2) + geom_boxplot(width=0.1, alpha=0.2)
+
+density_fixation <- ggplot(d_final, aes(x=Fixation.Time.Log)) + geom_density()
+  
+density_agreement <- ggplot(d_final, aes(x=Agreement.Scaled)) + geom_density()
+
+grid.arrange(violin_fixation, violin_agreement, density_fixation,
+             density_agreement, nrow=2)
+
+```
+
+## Statistical model
+
+```{r}
+res_mixed <- lmer(Fixation.Time.Log ~ Agreement.Scaled +
+                    Squared.Agreement.Scaled +
+                    (1 | Index) +
+                    (Agreement.Scaled + Squared.Agreement.Scaled | Subject),
+                  data=d_final, control = lmerControl(optimizer ="bobyqa"))
+
+summary(res_mixed)
+plot_model(res_mixed,
+           axis.labels=c("Agreement (Quadratic)", "Agreement"),
+           show.values=TRUE, show.p=TRUE,
+           title="Quadratic effect of Agreement on Fixation Times")
+
+quad_function <- function(x, alpha, beta1, beta2)
+{
+  return(alpha + beta1*x + beta2*x^2)
+}
+```
+
+### Random effect plot
+
+```{r}
+ggplot() +
+  geom_point(data=d_final, aes(Agreement.Scaled, Fixation.Time.Log)) +
+  geom_function(fun=quad_function,
+                args=list(alpha=summary(res_mixed)[["coefficients"]][1],
+                                        beta1=summary(res_mixed)[["coefficients"]][2],
+                                        beta2=summary(res_mixed)[["coefficients"]][3]),
+                color="blue",
+                linewidth=1.5)
+
+```
+
+### Residuals analysis
+
+```{r}
+qqnorm(residuals(res_mixed))
+qqline(residuals(res_mixed))
+hist(residuals(res_mixed))
+ks.test(x=residuals(res_mixed), y='pnorm')
+```
+
