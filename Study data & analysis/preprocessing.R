@@ -83,7 +83,7 @@ exclude <- function()
   lapply(responses_files, function(x) {
     filename <- basename(x)
     path <- x
-    ET_files  <- list.files(path=file.path("raw_data", "ET_raw"), pattern="*.csv", recursive = TRUE)
+    ET_files  <- basename(list.files(path=file.path("raw_data", "ET_raw"), pattern="*.csv", recursive = TRUE))
     if(!(is.element(filename, ET_files)))
     {
       path <- file.path("excluded_data", "responses", filename)
