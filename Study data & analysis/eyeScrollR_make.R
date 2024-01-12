@@ -1,7 +1,7 @@
 eyeScrollR_make <- function()
 {
   if (!dir.exists(file.path("intermediate_data", "ET"))) {dir.create(file.path("intermediate_data", "ET"), recursive = TRUE)}
-  ET_files <- list.files(path=file.path("raw_data", "ET_raw"), pattern="*.csv", full.names = TRUE)
+  ET_files <- list.files(path=file.path("raw_data", "ET_raw"), pattern="*.csv", full.names = TRUE, recursive = TRUE)
   ET_files_names <- basename(ET_files)
   datasets <- lapply(ET_files, read_csv, comment="#", show_col_types = FALSE)
   datasets <- lapply(datasets,
