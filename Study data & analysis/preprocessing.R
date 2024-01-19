@@ -58,8 +58,22 @@ exclude <- function()
       {
         d_ET <- read_csv(x, comment = "#", show_col_types = FALSE)
         max_ts <- max(d_ET$Timestamp)
-        d_ET <- d_ET %>% filter(!is.na(Gaze.X))
-        if(nrow(d_ET)/(max_ts/1000)<60)
+        d_freq <- d_ET %>% filter(!is.na(Gaze.X))
+        
+        ## Careful analysis of the datasets showed that only space strokes after the first 2 minutes were done during the period of interest
+        d_keys <- d_ET %>% filter(Timestamp > 120000, grepl("Space", Data, fixed = TRUE))
+        
+        # Get clicks on the right edge of the screen (scroll bar)
+        d_click <- d_ET %>%
+          filter(Timestamp > 60000, grepl("BUTTONDOWN", Data, fixed = TRUE))
+        d_click <- d_click %>%
+          mutate(X = unlist(strsplit(Data, ";"))[seq(from=2, by=6, length.out=nrow(d_click))])
+        d_click <- d_click %>%
+          mutate(X.Coord = as.numeric(unlist(strsplit(X, ":"))[seq(from=2, by=2, length.out=nrow(d_click))])) %>%
+          filter(X.Coord > 1900)
+        
+        
+        if(nrow(d_freq)/(max_ts/1000)<60)
         {
           if(grepl("smooth", x, fixed = TRUE))
           {
@@ -70,6 +84,32 @@ exclude <- function()
             path <- file.path("excluded_data", "ET_raw", filename)
           }
           cat(paste(filename, "Reason: low frequency of data", nrow(d_ET)/(max_ts/1000), sep=", "), file="exclusion_log.txt", sep="\n", append=TRUE)
+          file.rename(response_file, file.path("excluded_data", "responses", filename))
+        }
+        else if(nrow(d_keys)>0)
+        {
+          if(grepl("smooth", x, fixed = TRUE))
+          {
+            path <- file.path("excluded_data", "ET_raw", "smooth", filename)
+          }
+          else
+          {
+            path <- file.path("excluded_data", "ET_raw", filename)
+          }
+          cat(paste(filename, "Reason: Did not respect instructions (key strokes messing with mouse scrolling)", sep=", "), file="exclusion_log.txt", sep="\n", append=TRUE)
+          file.rename(response_file, file.path("excluded_data", "responses", filename))
+        }
+        else if(nrow(d_click)>0)
+        {
+          if(grepl("smooth", x, fixed = TRUE))
+          {
+            path <- file.path("excluded_data", "ET_raw", "smooth", filename)
+          }
+          else
+          {
+            path <- file.path("excluded_data", "ET_raw", filename)
+          }
+          cat(paste(filename, "Reason: Did not respect instructions (used the right scroller)", sep=", "), file="exclusion_log.txt", sep="\n", append=TRUE)
           file.rename(response_file, file.path("excluded_data", "responses", filename))
         }
         

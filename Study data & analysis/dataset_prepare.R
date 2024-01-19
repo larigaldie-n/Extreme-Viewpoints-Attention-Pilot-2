@@ -8,12 +8,14 @@ library(eyeScrollR)
 source("preprocessing.R")
 exclude()
 
-# Take files from /ET_raw/ (raw eye tracker files from iMotions), and output
-# eyeScrollR-corrected files into /ET/
+# Takes files from /raw_data/ET_raw (raw eye tracker files from iMotions), and
+# outputs eyeScrollR-corrected files into /intermediate_data/ET/
 source("eyeScrollR_make.R")
 eyeScrollR_make()
 
-# Also outputs files in /final/, which are the total sum of fixation times for
-# each statement
+# Takes files from /intermediate_data/ET/ (eyeScrollR-corrected files), and
+# outputs files in /final_data/, which are complete data files with all
+# statements, questionnaire ratings, experimental condition and total dwell
+# times
 source("dataset_merge.R")
 datasets_merge()

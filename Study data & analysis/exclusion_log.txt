@@ -1,3 +1,10 @@
+OT651.csv, Reason: Did not respect instructions (key strokes messing with mouse scrolling)
 QZ376.csv, Reason: Responses absent from the response file (participant did not finish study)
+RN450.csv, Reason: Did not respect instructions (key strokes messing with mouse scrolling)
+JN333.csv, Reason: Did not respect instructions (used the right scroller)
 QZ376.csv, Reason: No associated response file
+UH825.csv, Reason: Did not respect instructions (used the right scroller)
+UM901.csv, Reason: Did not respect instructions (used the right scroller)
+VD781.csv, Reason: Did not respect instructions (used the right scroller)
 VZ392.csv, Reason: Responses absent from the response file (participant did not finish study)
+US850.csv, Reason: Did not respect instructions (used the right scroller)
