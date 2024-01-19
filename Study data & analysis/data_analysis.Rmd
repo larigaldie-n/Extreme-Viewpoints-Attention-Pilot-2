@@ -102,7 +102,43 @@ summary(res_mixed)
 plot_model(res_mixed,
            #axis.labels=c("Agreement (Quadratic)", "Agreement"),
            show.values=TRUE, show.p=TRUE,
-           title="Quadratic effect of Agreement on Fixation Times")
+           title="Quadratic effect of Agreement on total dwell times")
+
+quad_function <- function(x, alpha, beta1, beta2, beta3, beta4, beta5, condition)
+{
+  return(alpha + beta1*x + beta2*x^2 + beta3*condition + beta4*(condition*x) +
+           beta5*(condition*x^2))
+}
+```
+
+#### Fixed effects plot
+
+```{r}
+ggplot() +
+  geom_point(data=d_final, aes(Agreement.Scaled, Dwell.Time.Log)) +
+  geom_function(fun=quad_function,
+                args=list(alpha=summary(res_mixed)[["coefficients"]][1],
+                          beta1=summary(res_mixed)[["coefficients"]][2],
+                          beta2=summary(res_mixed)[["coefficients"]][3],
+                          beta3=summary(res_mixed)[["coefficients"]][4],
+                          beta4=summary(res_mixed)[["coefficients"]][5],
+                          beta5=summary(res_mixed)[["coefficients"]][6],
+                          condition = 0),
+                color="blue",
+                linewidth=1.5)
+
+ggplot() +
+  geom_point(data=d_final, aes(Agreement.Scaled, Dwell.Time.Log)) +
+  geom_function(fun=quad_function,
+                args=list(alpha=summary(res_mixed)[["coefficients"]][1],
+                          beta1=summary(res_mixed)[["coefficients"]][2],
+                          beta2=summary(res_mixed)[["coefficients"]][3],
+                          beta3=summary(res_mixed)[["coefficients"]][4],
+                          beta4=summary(res_mixed)[["coefficients"]][5],
+                          beta5=summary(res_mixed)[["coefficients"]][6],
+                          condition = 1),
+                color="blue",
+                linewidth=1.5)
 ```
 
 ### Agreement (contacts)
@@ -117,25 +153,39 @@ summary(res_mixed)
 plot_model(res_mixed,
            #axis.labels=c("Agreement (Quadratic)", "Agreement"),
            show.values=TRUE, show.p=TRUE,
-           title="Quadratic effect of Agreement on Fixation Times")
+           title="Quadratic effect of contacts Agreement on total dwell times")
 
-# quad_function <- function(x, alpha, beta1, beta2)
-# {
-#   return(alpha + beta1*x + beta2*x^2)
-# }
+
 ```
 
-### Random effect plot
+#### Fixed effects plot
 
 ```{r}
-# ggplot() +
-#   geom_point(data=d_final, aes(Agreement.Scaled, Dwell.Time.Log)) +
-#   geom_function(fun=quad_function,
-#                 args=list(alpha=summary(res_mixed)[["coefficients"]][1],
-#                                         beta1=summary(res_mixed)[["coefficients"]][2],
-#                                         beta2=summary(res_mixed)[["coefficients"]][3]),
-#                 color="blue",
-#                 linewidth=1.5)
+ggplot() +
+  geom_point(data=d_final, aes(Agreement.Contacts.Scaled, Dwell.Time.Log)) +
+  geom_function(fun=quad_function,
+                args=list(alpha=summary(res_mixed)[["coefficients"]][1],
+                          beta1=summary(res_mixed)[["coefficients"]][2],
+                          beta2=summary(res_mixed)[["coefficients"]][3],
+                          beta3=summary(res_mixed)[["coefficients"]][4],
+                          beta4=summary(res_mixed)[["coefficients"]][5],
+                          beta5=summary(res_mixed)[["coefficients"]][6],
+                          condition = 0),
+                color="blue",
+                linewidth=1.5)
+
+ggplot() +
+  geom_point(data=d_final, aes(Agreement.Contacts.Scaled, Dwell.Time.Log)) +
+  geom_function(fun=quad_function,
+                args=list(alpha=summary(res_mixed)[["coefficients"]][1],
+                          beta1=summary(res_mixed)[["coefficients"]][2],
+                          beta2=summary(res_mixed)[["coefficients"]][3],
+                          beta3=summary(res_mixed)[["coefficients"]][4],
+                          beta4=summary(res_mixed)[["coefficients"]][5],
+                          beta5=summary(res_mixed)[["coefficients"]][6],
+                          condition = 1),
+                color="blue",
+                linewidth=1.5)
 
 ```
 
