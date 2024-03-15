@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <title>Questionnaire</title>
+</head>
+<body>
+    <section class="main" id="main">
+        <div class="instructions">
+            <p>Alle tidligere viste udsagn vil nu blive præsenteret igen. Denne gang arrangeret efter emne</p>
+            <p>Rangér hvor enig du er i de kommende udsagn ved brug af skalaen (fra ”meget uenig” til ”meget enig”). Rangér ligeledes hvor enig du tror, at de fleste mennesker, som du er i forbindelse med på dit foretrukne sociale medie, er i udsagnet (fra ”forbindelser er meget uenige” til ”forbindelser er meget enige”)</p>
+            <p>Angiv også hvorvidt du tror, at dette er første gang, at du har tænkt over eller er blevet konfronteret med ideen udtrykt i de følgende udsagn i forhold til dette emne (ja/nej) </p>
+            <p>Hvert udsagn kræver et svar</p>
+        </div>
+        <form action="/ending/" method="post">
+            {% for topic in arguments %}
+                <article class="article-quest">
+                    <header class="header-quest">
+                    </header>
+                    <div class="empty"></div>
+                    <div class="argument-quest-wrapper">
+                        <p class="claim">{{ topic }}</p>
+                    {% for argument in arguments[topic] %}
+                        <div class="arguments-line">
+                            <span class="arguments-container">{{ argument[0] }}</span>
+                            <span class="blank"> </span>
+                            <span class="questions">
+                                <div class="div-input">
+                                    <span class="label-questions">
+                                        <span class="disagree">Meget uenig</span>
+                                        <span class="middle">Neutral</span>
+                                        <span class="agree">Meget enig</span>
+                                    </span>
+                                    <span class="range-with-name">
+                                    <span><input type="range" min="0" max="100" step="any" class="agreement" name="{{ argument[1] }}-agreement" id="{{ argument[1] }}-agreement"></span></span>
+                                </div>
+                                <div class="div-input">
+                                    <span class="label-questions">
+                                        <span class="disagree">Forbindelser er meget uenige</span>
+                                        <span class="middle">Neutral</span>
+                                        <span class="agree">Forbindelser er meget enige </span>
+                                    </span>
+                                    <input type="range" min="0" max="100" step="any" class="emotions" name="{{ argument[1] }}-agreement-contacts" id="{{ argument[1] }}-agreement-contacts">
+                                </div>
+                                <span class="new-argument">
+                                    <span class="new-argument-question">Ny idé?</span>
+                                    <span class="new-argument-yes"><label for="{{ argument[1] }}-radio-yes">Ja</label><input type="radio" name="{{ argument[1] }}-new" id="{{ argument[1] }}-radio-yes" value="1" required></span>
+                                    <span class="new-argument-no"><label for="{{ argument[1] }}-radio-no">Nej</label><input type="radio" name="{{ argument[1] }}-new" id="{{ argument[1] }}-radio-no" value="0" required></span>
+                                </span>
+                            </span>
+                        </div>
+                        <hr>
+                    {% endfor %}
+                    </div>
+                </article>
+            {% endfor %}
+            <input hidden id="user" name="user" value="{{ user }}">
+            <input hidden id="condition" name="condition" value="{{ condition }}">
+            <span class="centering"><input type="submit" value="Indsend svar"></span>
+        </form>
+    </section>
+</body>
+</html>

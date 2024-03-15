@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <title>Instructions</title>
+</head>
+<body>
+
+    <section class="main" id="main">
+        <div class="instructions">
+            <p>Inden du starter, skal du vælge et social medie (f.eks. Facebook, Twitter, LinkedIn), hvor du sommetider er aktiv. Det betyder et social medie, hvor du af og til deler indhold eller interagerer med andre brugere udenfor det private beskedsystem</p>
+            <p>Hvis du ikke er aktiv på nogle sociale medier, så bør du venligst ikke deltage i dette forsøg</p>
+            <p>Når du har valgt et sociale medie, så hold venligst dette i tankerne gennem hele undersøgelsen. Det vil blive refereret til som "dit valgte sociale medie" gennem resten af undersøgelsen</p>
+            {% if condition == 0 %}
+            <p>På trods af, hvad der blev bedt om dig af eksperimentatoren, vil du ikke blive bedt om at dele noget eller på nogen måde interagere med sociale netværk efter eget valg under undersøgelsen</p>
+            {% endif %}
+            <p>I første fase af undersøgelsen vil du få en liste over udsagn, der dækker en bred vifte af forskellige emner</p>
+            <p>Her er et eksempel:</p>
+        </div>
+        <article class="article-xp">
+            <header class="header-quest">
+                <p class="claim">Eksempel på spørgsmål: "Eksisterer der rumvæsener?"</p>
+            </header>
+            <div class="empty"></div>
+            <p class="argument">Eksempel på udsagn: "Hvis der eksisterede liv andre steder i universet, så ville det være kendt af menneskeheden på nuværende tidspunkt"</p>
+        </article>
+        <hr>
+        <div class="instructions">
+            {% if condition == 0 %}
+            <p>Tag dig venligst tid til at læse igennem disse udsagn, og overvej hvad din holdning er til dem</p>
+            {% elif condition == 1 %}
+            <p>Tag dig venligst god tid til at læse hvert af udsagnene og udvælg hvilke(t) du ville være villig til at dele på dit valgte sociale medie ved at klikke på dem. Du <b>skal</b> vælge mindst ét udsagn, men du kan vælge så mange, som du ønsker</p>
+            {% endif %}
+            <p>Undervejs i undersøgelsen, så husk venligst <b>kun</b> at benytte dig af rullehjullet på musen til at rulle ned på skærmen. Forsøg venligst ikke at rulle ned på selve siden eller på den bærbare computer</p>
+            <p>Når du er færdig med at læse alle udsagnene, så klik på "Færdig med at læse" knappen, som findes i bunden af siden for at fortsætte</p>
+            <p>Du vil herefter blive bedt om at besvare et spørgeskema</p>
+            {% if condition == 1 %}
+            <p>Derefter vil et af de udsagn, som du valgte blive tilfældigt udvalgt. Du vil blive spurgt om at dele det på dit valgte sociale medie</p>
+            {% endif %}
+        </div>
+
+        <form action="/XP/" method="get">
+            <input hidden id="user" name="user" value="{{ user }}">
+            <input hidden id="condition" name="condition" value="{{ condition }}">
+            <input type="submit" value="Påbegynd undersøgelse">
+        </form>
+    </section>
+</body>
+</html>
