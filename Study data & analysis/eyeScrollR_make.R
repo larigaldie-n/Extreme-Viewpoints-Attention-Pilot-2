@@ -28,15 +28,6 @@ eyeScrollR_make <- function()
       datasets[[i]]$Gaze.X[rep_idx] <- NA
       datasets[[i]]$Gaze.Y[rep_idx] <- NA
     }
-    # data <- datasets[[i]] %>% filter(grepl("WM_LBUTTONUP", Data, fixed = TRUE))
-    # diff <- c()
-    # for(j in seq_len(nrow(data)-1))
-    # {
-    #   diff <- c(diff, data[[j+1, "Timestamp"]] - data[[j, "Timestamp"]])
-    # }
-    # max_diff_idx <- which(diff == max(diff))
-    # timestamp_start[[ET_files_names[[i]]]] <- data[[max_diff_idx, "Timestamp"]]
-    # timestamp_stop[[ET_files_names[[i]]]] <- data[[max_diff_idx+1, "Timestamp"]]
   }
   
   img_height <- 29913
@@ -67,8 +58,7 @@ eyeScrollR_make <- function()
       filter(Y.Coord>29700, Y.Coord<29820, X.Coord>780, X.Coord<1135)
     
     d_ET <- d_ET %>% filter(Timestamp < d_click$Timestamp[1]) %>%
-      select(Timestamp, Corrected.Gaze.X, Corrected.Gaze.Y, Fixation.Start, Fixation.End, Fixation.Duration, Corrected.Fixation.X, Corrected.Fixation.Y) %>%
-      filter(!is.na(Corrected.Gaze.Y) | !is.na(Corrected.Fixation.Y))
+      select(Timestamp, Corrected.Gaze.X, Corrected.Gaze.Y, Fixation.Start, Fixation.End, Fixation.Duration, Corrected.Fixation.X, Corrected.Fixation.Y)
     
     write_csv(d_ET, file = file.path("intermediate_data", "ET", ET_files_names[i]), na = "")
   }
