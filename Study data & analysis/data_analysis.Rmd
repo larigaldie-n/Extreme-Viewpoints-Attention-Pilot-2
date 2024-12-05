@@ -9,6 +9,10 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+# NB : if you never output pdf files with RMarkdown, it might be necessary to
+# install the tinytex library and run tinytex::install_tinytex()
+
 library(tidyverse)
 library(lme4)
 library(afex)
